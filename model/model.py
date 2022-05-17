@@ -3,7 +3,6 @@ from data.load_data import load_data
 from data.clean_data import clean_data
 from data.split_data import split_data
 from model.validation import validation_results
-from model.model import LR
 import pickle
 
 
