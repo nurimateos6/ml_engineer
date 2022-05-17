@@ -1,0 +1,14 @@
+name: mlops-linear-regression
+on:
+  push:
+    branches:
+      - experiment
+jobs:
+  execution_model: # Run
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+          echo '## Validation Metrics for the model'
+          cat validation_metrics.txt >> report.md
+          cml publish model_results.png --md >> report.md
+          cml send-comment report.md
