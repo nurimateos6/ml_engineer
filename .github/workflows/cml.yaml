@@ -1,22 +1,32 @@
-ame: mlops-linear-regression
-on: [push]
+name: mlops-linear-regression
+on:
+  push:
+    branches:
+      - experiment
 jobs:
-  run:
-    runs-on: ubuntu-latest
-    container: docker://dvcorg/cml-py3:latest
+  pipeline_ml_model:
+    runs-on: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: iterative/setup-cml@v1
+      - name: Installing requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Obtaining dataset
+        run: |
+            python main.py --download-data
+      - name: Integration Test - Dataset Validation
+        run: |
+          pytest -vv -q integration_test/unit_testing.py
       - name: Train model
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # ML Workflow
-          pip install -r requirements.txt
-          python main.py --run-all
-          
-          echo '## Validation Metrics for the model
-          cat validation_metrics.txt >> model_report.md
-          
-          cml-publish model_results.png --md >> model_report.md
-          
-          cml send-comment model_report.md 
+          python main.py --run-model
+          echo '## Validation Metrics for the model'
+          cat validation_metrics.txt >> report.md
+          cml publish model_results.png --md >> report.md
+          cml send-comment report.md
