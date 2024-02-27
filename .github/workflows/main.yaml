@@ -2,7 +2,7 @@ name: mlops-linear-regression
 on:
   push:
     branches:
-      - experiment
+      - main
 jobs:
   pipeline_ml_model:
     runs-on: [ubuntu-latest]
